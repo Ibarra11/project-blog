@@ -1,23 +1,54 @@
-import React from 'react';
+import React from "react";
+import BlogHero from "@/components/BlogHero";
+import { MDXRemote } from "next-mdx-remote/rsc";
+import styles from "./postSlug.module.css";
+import { readFile } from "node:fs/promises";
+import CodeSnippet from "@/components/CodeSnippet/CodeSnippet";
+import path from "node:path";
+import matter from "gray-matter";
+import dynamic from "next/dynamic";
+import CircularColorsDemo from "@/components/CircularColorsDemo/CircularColorsDemo";
 
-import BlogHero from '@/components/BlogHero';
+const DivisionGroupsDemo = dynamic(() =>
+  import("@/components/DivisionGroupsDemo/DivisionGroupsDemo")
+);
 
-import styles from './postSlug.module.css';
+const getBlogPost = React.cache(async (slug) => {
+  const rawContent = await readFile(
+    path.join(process.cwd(), `/content/${slug}.mdx`),
+    { encoding: "utf-8" }
+  );
+  return matter(rawContent);
+});
 
-function BlogPost() {
+export async function generateMetadata({ params }) {
+  const { data } = await getBlogPost(params.postSlug);
+  return {
+    title: data.title,
+    content: data.abstract,
+    description: "name",
+  };
+}
+
+async function BlogPost({ params }) {
+  const { content, data } = await getBlogPost(params.postSlug);
+
   return (
     <article className={styles.wrapper}>
-      <BlogHero
-        title="Example post!"
-        publishedOn={new Date()}
-      />
+      <BlogHero title={data.title} publishedOn={data.publishedOn} />
       <div className={styles.page}>
-        <p>This is where the blog post will go!</p>
-        <p>
-          You will need to use <em>MDX</em> to render all of
-          the elements created from the blog post in this
-          spot.
-        </p>
+        <MDXRemote
+          components={{
+            pre: CodeSnippet,
+            ...(data.title === "Understanding the JavaScript Modulo Operator"
+              ? {
+                  DivisionGroupsDemo: DivisionGroupsDemo,
+                  CircularColorsDemo: CircularColorsDemo,
+                }
+              : {}),
+          }}
+          source={content}
+        />
       </div>
     </article>
   );

@@ -1,7 +1,7 @@
 module.exports = {
   experimental: {
     outputFileTracingIncludes: {
-      '/*': ['./content/**/*'],
+      "/*": ["./content/**/*"],
     },
   },
 };
