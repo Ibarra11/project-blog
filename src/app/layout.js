@@ -42,7 +42,9 @@ function RootLayout({ children }) {
     >
       <body>
         <Header theme={theme} />
+
         <main>{children}</main>
+
         <Footer />
       </body>
     </html>

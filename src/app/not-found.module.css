@@ -1,0 +1,16 @@
+.wrapper {
+  max-width: 720px;
+  width: 100%;
+  margin: 0 auto;
+  text-align: center;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.heading {
+  font-weight: 700;
+  font-size: 1.5rem;
+}
